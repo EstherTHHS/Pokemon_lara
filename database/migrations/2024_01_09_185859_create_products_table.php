@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('price');
             $table->string('type');
             $table->string('rarity');
-            $table->boolean('left');
+            $table->string('left');
             $table->string('image_url')->nullable();
             $table->boolean('status')->default(1)->nullable();
             $table->timestamps();

@@ -21,9 +21,28 @@ class Product extends Model
         'status'
     ];
 
+
     protected $hidden = [
         'created_at',
         'updated_at',
         'deleted_at',
     ];
+
+
+    public function scopeFilterProduct($query, $search, $type, $rarity)
+    {
+        return $query
+            ->when($type ?? false, function ($query, $type) {
+                $query->where('type', 'like', "%$type%");
+            })
+            ->when($rarity ?? false, function ($query, $rarity) {
+                $query->where('rarity', 'like', "%$rarity%");
+            })
+            ->when($search ?? false, function ($query, $search) {
+                $query->where('name', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('price', 'like', "%$search%")
+                    ->orWhere('left', 'like', "%$search%");
+            });
+    }
 }

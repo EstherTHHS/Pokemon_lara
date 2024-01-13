@@ -8,6 +8,7 @@ use App\Services\ProductService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
 {
@@ -28,8 +29,9 @@ class ProductController extends Controller
             $startTime = microtime(true);
 
             $data = $this->productService->getProduct($request);
+            $result = ProductResource::collection($data);
 
-            return response()->paginate($request, $data, 'Product Data found Successfully.', 201, $startTime);
+            return response()->success($request, $result, 'Product Data found Successfully.', 200, $startTime, count($result));
         } catch (Exception $e) {
             Log::channel('sora_error_log')->error("Product Store Error" . $e->getMessage());
             return response()->error(request(), null, $e->getMessage(), 500, $startTime);
@@ -61,9 +63,23 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $id, Request $request)
     {
-        //
+        try {
+
+            $startTime = microtime(true);
+
+            $data = $this->productService->getProudctById($id);
+
+            if ($data == null) {
+                return response()->error(request(), [], "Data not found ", 404, $startTime);
+            }
+
+            return response()->success($request, $data, 'Product Data found Successfully.', 200, $startTime, count($data));
+        } catch (Exception $e) {
+            Log::channel('sora_error_log')->error("Product Store Error" . $e->getMessage());
+            return response()->error(request(), null, $e->getMessage(), 500, $startTime);
+        }
     }
 
     /**

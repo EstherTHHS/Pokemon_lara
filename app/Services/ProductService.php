@@ -22,6 +22,11 @@ class ProductService
   }
 
 
+  public function getProudctById($id)
+  {
+    return $this->ProductRepoInterface->getProudctById($id);
+  }
+
 
 
 

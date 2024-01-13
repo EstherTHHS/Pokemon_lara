@@ -20,23 +20,56 @@ class ProductRepository implements ProductRepositoryInterface
 
     $type = $request->input('type');
     $rarity = $request->input('rarity');
+    $search = $request->input('search');
 
-    $products = Product::where('status', '1')->get();
-    $products->each(function ($product) {
-      $product->image_url = asset('image/' . $product->image_url);
+    $products = Product::where('status', '1')->orderBy('created_at', 'desc');
+
+    $products = $products->FilterProduct($search, $type, $rarity);
+
+    $result = $products->get();
+
+    return $result;
+  }
+
+
+  public function getProudctById($id)
+  {
+
+    $product = Product::where('id', $id)->where('status', '1')->first();
+
+
+    if ($product == null) {
+      return null;
+    }
+
+
+    if (!$product) {
+
+      return null;
+    }
+
+
+    $product->image_url = asset('image/' . $product->image_url);
+
+
+    $type = $product->type;
+
+
+    $relatedProducts = Product::where('type', $type)
+      ->where('status', '1')
+      ->inRandomOrder()
+      ->take(3)
+      ->get();
+
+
+    $relatedProducts->each(function ($relatedItem) {
+      $relatedItem->image_url = asset('image/' . $relatedItem->image_url);
     });
-    return $products;
 
 
-    // $products->when($type ?? false, function ($query, $type) {
-    //   $query->where('type', 'like', "%$type%");
-    // });
-
-    // $products->when($rarity ?? false, function ($query, $rarity) {
-    //   $query->where('rarity', 'like', "%$rarity%");
-    // });
-    // $data = $products->orderBy('created_at', 'desc')->paginate($this->limit($request));
-
-    // return $products;
+    return [
+      'product' => $product,
+      'relatedItems' => $relatedProducts,
+    ];
   }
 }

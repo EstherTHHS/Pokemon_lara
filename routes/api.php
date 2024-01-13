@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/product', ProductController::class);
     Route::delete('/delete-image/product/{id}', [ProductController::class, 'deleteProductImage']);
     Route::get('/status/product/{id}', [ProductController::class, 'productStatus']);
+    Route::post('/payment', [PaymentController::class, 'store']);
 });
 
 

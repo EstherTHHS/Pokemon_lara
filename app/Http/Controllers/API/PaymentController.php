@@ -2,48 +2,37 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
+use App\Services\PaymentService;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    protected $paymentService;
+
+    public function __construct(PaymentService $paymentService)
     {
-        //
+        $this->paymentService = $paymentService;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        try {
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+            $startTime = microtime(true);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+
+
+            $data = $this->paymentService->storePayment($request->all());
+
+            return response()->success($request, $data, 'Product Create Successfully.', 201, $startTime, 1);
+        } catch (Exception $e) {
+            Log::channel('sora_error_log')->error("Product Create Error" . $e->getMessage());
+            return response()->error($request, null, $e->getMessage(), 500, $startTime);
+        }
     }
 }

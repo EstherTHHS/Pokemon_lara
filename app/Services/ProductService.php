@@ -34,21 +34,6 @@ class ProductService
   {
 
     return $this->ProductRepoInterface->storeProduct($validatedData);
-    // $image = $validatedData['image_url'];
-    // $image_url = time() . "_" .  $image->getClientOriginalName();
-    // $image->storeAs('image/' .  $image_url);
-    // $data = Product::create([
-    //   'name' => $validatedData['name'],
-    //   'description' => $validatedData['description'],
-    //   'price' => $validatedData['price'],
-    //   'type' => $validatedData['type'],
-    //   'rarity' => $validatedData['rarity'],
-    //   'left' => $validatedData['left'],
-    //   'image_url' => $image_url,
-
-    // ]);
-
-    // return $data;
   }
 
 

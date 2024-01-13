@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use App\Interfaces\ProductRepositoryInterface;
 
 class ProductRepository implements ProductRepositoryInterface
@@ -62,14 +63,95 @@ class ProductRepository implements ProductRepositoryInterface
       ->get();
 
 
-    $relatedProducts->each(function ($relatedItem) {
-      $relatedItem->image_url = asset('image/' . $relatedItem->image_url);
+    $relatedProducts->each(function ($relatedProduct) {
+      $relatedProduct->image_url = asset('image/' . $relatedProduct->image_url);
     });
 
 
     return [
       'product' => $product,
-      'relatedItems' => $relatedProducts,
+      'relatedProducts' => $relatedProducts,
     ];
+  }
+
+
+  public function storeProduct($validatedData)
+  {
+    $image = $validatedData['image_url'];
+    $image_url = time() . "_" .  $image->getClientOriginalName();
+    $image->storeAs('image/' .  $image_url);
+    $data = Product::create([
+      'name' => $validatedData['name'],
+      'description' => $validatedData['description'],
+      'price' => $validatedData['price'],
+      'type' => $validatedData['type'],
+      'rarity' => $validatedData['rarity'],
+      'left' => $validatedData['left'],
+      'image_url' => $image_url,
+
+    ]);
+
+    return $data;
+  }
+
+
+
+  public function updateProduct($request, $id)
+  {
+    $product = Product::where('id', $id)->first();
+    $product->name = $request['name'];
+    $product->description = $request['description'];
+    $product->price  = $request['price'];
+    $product->type  = $request['type'];
+    $product->rarity  = $request['rarity'];
+    $product->left = $request['left'];
+    $data = $product->save();
+    return $data;
+  }
+
+
+  public function deleteProduct($id)
+  {
+    $product = Product::where('id', $id)->first();
+
+    if (!$product) {
+      return null;
+    }
+
+    $product->delete();
+
+    return $product;
+  }
+
+  public function deleteProductImage($id)
+  {
+
+
+    $product = Product::where('id', $id)->first();
+
+    if (!$product) {
+      return null;
+    }
+
+    if ($product->image_url) {
+      Storage::delete('image/' . $product->image_url);
+      $product->image_url = null;
+      $data = $product->save();
+    }
+    return $data;
+  }
+
+
+  public function productStatus($id)
+  {
+
+    $product = Product::where('id', $id)->first();
+    if (!$product) {
+      return null;
+    }
+    $product->status = $product->status == 1 ? 0 : 1;
+    $product->save();
+
+    return $product;
   }
 }

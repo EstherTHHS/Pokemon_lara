@@ -33,7 +33,7 @@ class ProductController extends Controller
 
             return response()->success($request, $result, 'Product Data found Successfully.', 200, $startTime, count($result));
         } catch (Exception $e) {
-            Log::channel('sora_error_log')->error("Product Store Error" . $e->getMessage());
+            Log::channel('sora_error_log')->error("Product found Error" . $e->getMessage());
             return response()->error(request(), null, $e->getMessage(), 500, $startTime);
         }
     }
@@ -55,7 +55,7 @@ class ProductController extends Controller
 
             return response()->success($request, $data, 'Product Create Successfully.', 201, $startTime, 1);
         } catch (Exception $e) {
-            Log::channel('sora_error_log')->error("Product Store Error" . $e->getMessage());
+            Log::channel('sora_error_log')->error("Product Create Error" . $e->getMessage());
             return response()->error($request, null, $e->getMessage(), 500, $startTime);
         }
     }
@@ -77,7 +77,7 @@ class ProductController extends Controller
 
             return response()->success($request, $data, 'Product Data found Successfully.', 200, $startTime, count($data));
         } catch (Exception $e) {
-            Log::channel('sora_error_log')->error("Product Store Error" . $e->getMessage());
+            Log::channel('sora_error_log')->error("Product Show Error" . $e->getMessage());
             return response()->error(request(), null, $e->getMessage(), 500, $startTime);
         }
     }
@@ -87,14 +87,75 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+
+            $startTime = microtime(true);
+
+            $data = $this->productService->updateProduct($request, $id);
+
+            return response()->success($request, $data, 'Product  Update Successfully.', 200, $startTime, 1);
+        } catch (Exception $e) {
+            Log::channel('sora_error_log')->error("Product Update Error" . $e->getMessage());
+            return response()->error(request(), null, $e->getMessage(), 500, $startTime);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
-        //
+        try {
+
+            $startTime = microtime(true);
+
+            $data = $this->productService->deleteProduct($id);
+
+            if ($data == null) {
+                return response()->error(request(), [], "Data not found ", 404, $startTime);
+            }
+
+            return response()->success(request(), $data, 'Product Delete Successfully.', 200, $startTime, 1);
+        } catch (Exception $e) {
+            Log::channel('sora_error_log')->error("Product Delete Error" . $e->getMessage());
+            return response()->error(request(), null, $e->getMessage(), 500, $startTime);
+        }
+    }
+
+
+    public function deleteProductImage(int $id)
+    {
+        try {
+
+            $startTime = microtime(true);
+
+            $data = $this->productService->deleteProductImage($id);
+            if ($data == null) {
+                return response()->error(request(), [], "Data not found ", 404, $startTime);
+            }
+
+            return response()->success(request(), $data, 'Product Delete Successfully.', 200, $startTime, 1);
+        } catch (Exception $e) {
+            Log::channel('sora_error_log')->error("Product Delete Error" . $e->getMessage());
+            return response()->error(request(), null, $e->getMessage(), 500, $startTime);
+        }
+    }
+
+    public function productStatus(int $id)
+    {
+        try {
+
+            $startTime = microtime(true);
+
+            $data = $this->productService->productStatus($id);
+            if ($data == null) {
+                return response()->error(request(), [], "Data not found ", 404, $startTime);
+            }
+
+            return response()->success(request(), $data, 'Product Status Change Successfully.', 200, $startTime, 1);
+        } catch (Exception $e) {
+            Log::channel('sora_error_log')->error("Product Status Change Error" . $e->getMessage());
+            return response()->error(request(), null, $e->getMessage(), 500, $startTime);
+        }
     }
 }

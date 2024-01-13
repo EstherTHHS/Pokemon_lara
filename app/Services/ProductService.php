@@ -32,20 +32,44 @@ class ProductService
 
   public function storeProduct($validatedData)
   {
-    $image = $validatedData['image_url'];
-    $image_url = time() . "_" .  $image->getClientOriginalName();
-    $image->storeAs('image/' .  $image_url);
-    $data = Product::create([
-      'name' => $validatedData['name'],
-      'description' => $validatedData['description'],
-      'price' => $validatedData['price'],
-      'type' => $validatedData['type'],
-      'rarity' => $validatedData['rarity'],
-      'left' => $validatedData['left'],
-      'image_url' => $image_url,
 
-    ]);
+    return $this->ProductRepoInterface->storeProduct($validatedData);
+    // $image = $validatedData['image_url'];
+    // $image_url = time() . "_" .  $image->getClientOriginalName();
+    // $image->storeAs('image/' .  $image_url);
+    // $data = Product::create([
+    //   'name' => $validatedData['name'],
+    //   'description' => $validatedData['description'],
+    //   'price' => $validatedData['price'],
+    //   'type' => $validatedData['type'],
+    //   'rarity' => $validatedData['rarity'],
+    //   'left' => $validatedData['left'],
+    //   'image_url' => $image_url,
 
-    return $data;
+    // ]);
+
+    // return $data;
+  }
+
+
+  public function updateProduct($request, $id)
+  {
+    return $this->ProductRepoInterface->updateProduct($request, $id);
+  }
+
+
+  public function deleteProduct($id)
+  {
+    return $this->ProductRepoInterface->deleteProduct($id);
+  }
+
+  public function deleteProductImage($id)
+  {
+    return $this->ProductRepoInterface->deleteProductImage($id);
+  }
+
+  public function productStatus($id)
+  {
+    return $this->ProductRepoInterface->productStatus($id);
   }
 }

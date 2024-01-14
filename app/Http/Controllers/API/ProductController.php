@@ -91,8 +91,13 @@ class ProductController extends Controller
 
             $startTime = microtime(true);
 
+
+
             $data = $this->productService->updateProduct($request, $id);
 
+            if ($data == null) {
+                return response()->error(request(), [], "Data not found ", 404, $startTime);
+            }
             return response()->success($request, $data, 'Product  Update Successfully.', 200, $startTime, 1);
         } catch (Exception $e) {
             Log::channel('sora_error_log')->error("Product Update Error" . $e->getMessage());

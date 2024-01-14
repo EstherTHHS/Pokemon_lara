@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaymentRequest;
 
 class PaymentController extends Controller
 {
@@ -18,7 +19,7 @@ class PaymentController extends Controller
         $this->paymentService = $paymentService;
     }
 
-    public function store(Request $request)
+    public function store(PaymentRequest $request)
     {
 
         try {
@@ -27,7 +28,7 @@ class PaymentController extends Controller
 
 
 
-            $data = $this->paymentService->storePayment($request->all());
+            $data = $this->paymentService->storePayment($request->validated());
 
             return response()->success($request, $data, 'Payment  Create Successfully.', 201, $startTime, 1);
         } catch (Exception $e) {

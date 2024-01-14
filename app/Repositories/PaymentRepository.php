@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Interfaces\PaymentRepositoryInterface;
 use App\Models\Cart;
 use App\Models\Payment;
+use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentRepository implements PaymentRepositoryInterface
@@ -15,32 +16,29 @@ class PaymentRepository implements PaymentRepositoryInterface
 
     $user_id = Auth::user()->id;
 
-    $payments = [];
-
     foreach ($data['data'] as $product) {
 
-      $cart = Cart::create(
+      $user_product = UserProduct::create([
+        'user_id' =>  $user_id,
+        'product_id' => $product['product_id']
+      ]);
+
+      Cart::create(
         [
-          'product_id' => $product['product_id'],
-          'user_id' => $user_id,
+          'user_product_id' => $user_product->id,
           'quantity' => $product['quantity'],
 
         ]
       );
-
-      $payment = Payment::create([
-        'cart_id' =>  $cart->id,
-        'user_id' => $user_id,
-        'amount' => $data['amount'],
-        'payment_method' => $data['payment_method'],
-        'payment_date' => $data['payment_date'],
-      ]);
-
-      $payments[] = $payment;
     }
 
+    $payment = Payment::create([
+      'user_id' => $user_id,
+      'amount' => $data['amount'],
+      'payment_method' => $data['payment_method'],
+      'payment_date' => $data['payment_date']
+    ]);
 
-
-    return   $payments;
+    return   $payment;
   }
 }

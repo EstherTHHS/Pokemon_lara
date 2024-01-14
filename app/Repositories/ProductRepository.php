@@ -98,7 +98,17 @@ class ProductRepository implements ProductRepositoryInterface
 
   public function updateProduct($request, $id)
   {
-    $product = Product::where('id', $id)->first();
+    $product = Product::where('id', $id)->where('status', '1')->first();
+    if ($product == null) {
+      return null;
+    }
+
+
+    if (!$product) {
+
+      return null;
+    }
+
     $product->name = $request['name'];
     $product->description = $request['description'];
     $product->price  = $request['price'];

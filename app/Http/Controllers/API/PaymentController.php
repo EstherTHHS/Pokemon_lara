@@ -29,7 +29,7 @@ class PaymentController extends Controller
 
             $data = $this->paymentService->storePayment($request->all());
 
-            return response()->success($request, $data, 'Product Create Successfully.', 201, $startTime, 1);
+            return response()->success($request, $data, 'Payment  Create Successfully.', 201, $startTime, 1);
         } catch (Exception $e) {
             Log::channel('sora_error_log')->error("Product Create Error" . $e->getMessage());
             return response()->error($request, null, $e->getMessage(), 500, $startTime);
